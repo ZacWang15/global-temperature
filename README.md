@@ -1,4 +1,4 @@
-# Global Temperature Data
+# Global Temperature Python library
 
 This project provides temperature (celsius degree) globally in land area by 0.3 degree x 0.3 degree grids.
 
