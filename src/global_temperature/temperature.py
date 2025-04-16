@@ -2,8 +2,13 @@ from abc import ABC, abstractmethod
 from .temperature_monthly import TemperatureMonthly
 from .temperature_daily import TemperatureDaily
 import logging
+from .grids.grid import Grids
+from .config import load_config, PACKAGE_ROOT
+from pathlib import Path
+import numpy as np
 
 logger = logging.getLogger(__name__)
+config = load_config("src/global_temperature/config.yaml")
 
 
 class TemperatureFactory:
@@ -26,19 +31,25 @@ class TemperatureBase(ABC):
         """Abstract method that subclasses must implement."""
         pass
 
-    def snap(self, latitude: float, longitude: float) -> tuple[float, float]:
+    def snap(self, latitude: float, longitude: float) -> tuple[np.ndarray, float]:
         """
         Snap the latitude and longitude to the nearest grid point.
         """
         # first check if the coordinates are valid
         self.check_coordinates(latitude, longitude)
 
+        # create a grid instance
+        grid = Grids()
+        grid.load_grid(
+            (PACKAGE_ROOT / config["grids"]["default_grid_file"]).resolve(),
+            config["grids"]["default_grid_name"],
+        )
+
         # snap to the nearest grid point
-        snapped_latitude = round(latitude * 100) / 100
-        snapped_longitude = round(longitude * 100) / 100
-        return snapped_latitude, snapped_longitude
-
-
+        point, distance = grid.query(
+            config["grids"]["default_grid_name"], latitude, longitude
+        )
+        return point, distance
 
 
 class TemperatureUnitBase(ABC):

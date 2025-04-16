@@ -2,6 +2,9 @@ from global_temperature.grids.grid import Grids
 import pytest
 from scipy.spatial import cKDTree
 import numpy as np
+from pathlib import Path
+
+print(Path(__file__).parent)
 
 
 # test the singleton pattern
