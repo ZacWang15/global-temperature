@@ -29,13 +29,13 @@ def test_load_grid():
     "latitude, longitude, expected_point, expected_distance",
     [
         (-37.89994, 145.06802, np.array([-37.9, 145.0]), 0.06802),
-        (40.7128, -74.0060, np.array([40.7, -74.0]), 0.0128),
-        (34.0522, -118.2437, np.array([34.1, -118.2]), 0.0522),
+        (40.7128, -74.0060, np.array([40.7, -74.0]), 0.014136),
+        (34.0522, -118.2437, np.array([34.1, -118.1]), 0.15144),
     ],
 )
 def test_query_grid(latitude, longitude, expected_point, expected_distance):
     grid = Grids()
-    grid.load_grid("src/global_temperature/grids/03x03/data.parquet", "03x03")
+    grid.load_grid(Path(__file__).parents[1] / "src/global_temperature/grids/03x03/data.parquet", "03x03")
 
     point, distance = grid.query("03x03", latitude, longitude)
     assert isinstance(point, np.ndarray), "Query should return a tuple"

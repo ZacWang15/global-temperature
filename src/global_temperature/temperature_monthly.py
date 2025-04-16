@@ -1,4 +1,4 @@
-from .temperature import TemperatureBase, TemperatureUnitBase
+from .temperature_base import TemperatureBase, TemperatureUnitBase
 from pathlib import Path
 import pandas as pd
 import logging
