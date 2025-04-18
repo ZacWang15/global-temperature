@@ -43,6 +43,12 @@ class TemperatureUnitBase(ABC):
     Abstract base class for a temperature data unit.
     """
 
+    @property
+    @abstractmethod
+    def data(self):
+        """Abstract property that subclasses must implement."""
+        pass
+
     @abstractmethod
     def load(self):
         """Abstract method that subclasses must implement."""

@@ -5,6 +5,7 @@ import logging
 from .tools import validate as vd
 from collections import OrderedDict
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -54,41 +55,33 @@ class TemperatureMonthly(TemperatureBase):
         vd.check_month(month)
 
         # snap latitude and longitude to the nearest point on the grid, todo
-        snapped_latitude, snapped_longitude = self.snap(
+        (snapped_latitude, snapped_longitude), distance = self.snap(
             latitude, longitude, self.seaerch_radius
         )
+
+        # Check if the distance is within the search radius
+        vd.check_within_radius(self.search_radius, distance)
+
         # Convert the latitude and longitude to geohash, todo
-        geohash = self.geohash.encode(snapped_latitude, snapped_longitude, self.geohash_precision)
+        geohash = self.geohash.encode(
+            snapped_latitude, snapped_longitude, self.geohash_precision
+        )
 
         # Check if monthly data already loaded before
-        if (year, month) not in self.units:
-            pass
+        if (year, month, geohash) not in self.units:
+            # load the monthly data
+            unit = TemperatureMonthlyUnit(self.source_folder, year, month, geohash)
+            self.units[(year, month, geohash)] = unit
+        else:
+            unit = self.units[(year, month, geohash)]
 
-        # # Check if the DataFrame is loaded
-        # if not hasattr(self, "df") or self.df.empty:
-        #     logger.warning(
-        #         "DataFrame is not loaded or is empty. Please load the data first."
-        #     )
-        #     self.load()
+        # query the temperature data from unit
+        temperature = unit.query(snapped_latitude, snapped_longitude)
 
-        # # Check if the year and month are in the DataFrame
-        # year_month = f"{year}-{month:02}"
-        # if year_month not in self.df.columns:
-        #     logger.error(f"Year {year} and month {month} not found in the data.")
-        #     return None
-
-        
-
-        # # Check if the latitude and longitude are in the DataFrame
-        # if (snapped_latitude, snapped_longitude) not in self.df.index:
-        #     logger.error(
-        #         f"Snapped oordinates ({snapped_latitude}, {snapped_longitude}) not found in the data."
-        #     )
-        #     return None
-
-        # # Get the temperature value
-        # temperature = self.df.at[(latitude, longitude), year_month]
-        # return temperature
+        if temperature is None:
+            logger.info(f"Temperature data not found for {latitude}, {longitude}")
+            return None
+        return temperature
 
 
 class TemperatureMonthlyUnit(TemperatureUnitBase):
@@ -96,34 +89,75 @@ class TemperatureMonthlyUnit(TemperatureUnitBase):
     read a single monthly temperature data file
     """
 
-    def __init__(self, file_path: str | Path) -> None:
-        """Hold a single monthly temperature data
-
-        Args:
-            file_path (str | Path): the path of the source data folder to read a partitioned parquet file
-        """
+    def __init__(self, source_folder: str, year: int, month: int, geohash: str) -> None:
         super().__init__()
-        self.file_path = file_path
+        self.source_folder = source_folder
+        self.year = year
+        self.month = month
+        self.geohash = geohash
 
-        # read the data into a pandas dataframe
-        self.df = self.load()
+        self.filename = self.build_filename()
+
+        # check if file format if valid
+        vd.check_file_format(self.filename)
+
+        # check if file exists
+        try:
+            vd.check_file_exists(self.filename)
+        except FileNotFoundError:
+            self.file_exist = False
+        else:
+            self.file_exist = True
+
+    @property
+    def data(self) -> pd.DataFrame:
+        """Property to get the DataFrame, loading it if necessary."""
+        if not hasattr(self, "_data"):
+            self._data = self.load()
+        return self._data
+
+    def build_filename(self) -> Path:
+        """build the filename"""
+        # build the filename
+        self.filename = (
+            Path(self.source_folder)
+            / f"monthly_{self.year}_{self.month:02}_{self.geohash}.parquet"
+        )
+        return self.filename
 
     def load(self) -> pd.DataFrame:
-        """
-        read monthly temperature data from parquet file into a pandas dataframe"
-        """
-        try:
-            if vd.check_file(self.file_path, "parquet"):
-                df = pd.read_parquet(self.file_path)
-
-                # check if the dataframe has the required columns
-                vd.check_df_columns(
-                    df, ["latitude", "longitude", "temperature_celsius_mean"]
-                )
-        except FileNotFoundError:
-            logger.error(f"File not found: {self.file_path}")
-            raise
-        except pd.errors.EmptyDataError:
-            logger.error(f"No data in file: {self.file_path}")
-
+        """load the data"""
+        if self.file_exist:
+            df = self.load_from_local()
+        else:
+            df = self.load_from_remote()
         return df
+
+    def load_from_local(self) -> pd.DataFrame:
+        """load data from a file"""
+        logger.info(f"Loading data from {self.filename}")
+        self.df = pd.read_parquet(self.filename)
+        return self.df
+
+    def load_from_remote(self):
+        """load data from an API"""
+        pass
+
+    def query(self, latitude: float, longitude: float) -> float | None:
+        """query the temperature value"""
+        # validate the input parameters such latitude and longitude
+        vd.check_coordinates(latitude, longitude)
+
+        # Check if the DataFrame is loaded
+        if not hasattr(self, "_data") or self._data.empty:
+            logger.info(
+                "DataFrame is not loaded or is empty. Please load the data first."
+            )
+            self._data = self.load()
+
+        value = self._data[
+            (self._data["latitude"] == latitude)
+            & (self._data["longitude"] == longitude)
+        ]["temperature_celsius_mean"].values[0]
+
+        return value
