@@ -2,7 +2,7 @@ from pathlib import Path
 import yaml
 
 # Resolve paths relative to the package root
-PACKAGE_ROOT = Path(__file__).parent 
+PACKAGE_ROOT = Path(__file__).parent
 CONFIG_FILE = PACKAGE_ROOT / "config.yaml"
 
 

@@ -7,11 +7,11 @@ from .. import errors as err
 logger = logging.getLogger(__name__)
 
 
-def check_file_format(file_path: str, file_format: str = "parquet") -> bool:
+def check_file_format(file_path: str | Path, file_format: str = "parquet") -> bool:
     """
     Check if the file is a parquet file.
     """
-    if not file_path.endswith(f".{file_format}"):
+    if not str(file_path).endswith(f".{file_format}"):
         raise ValueError(f"File is not a {file_format} file: {file_path}")
 
     return True

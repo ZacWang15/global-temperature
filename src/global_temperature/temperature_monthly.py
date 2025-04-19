@@ -4,6 +4,8 @@ import pandas as pd
 import logging
 from .tools import validate as vd
 from collections import OrderedDict
+import pygeohash as pgh
+import numpy as np
 
 
 logger = logging.getLogger(__name__)
@@ -15,13 +17,15 @@ class TemperatureMonthly(TemperatureBase):
         search_radius: float = 0.3,
         source_folder: str | Path = "",
         geohash_precision: int = 2,
-        max_cache_size: int = 100,
+        max_cache_size: int = 200,
     ) -> None:
         """Hold monthly temperature data
 
         Args:
             search_radius (float, optional): the search radius in degrees to snap to the grid. Defaults to 0.3.
-            source_folder (str | Path): the path of the source data folder to read partitioned parquet files
+            source_folder (str | Path): the path of the source data folder to read partitioned parquet files. In source folder, it should have a folder structure like this:
+                - source_folder / year={year}/ month={month}/{geohash}/data.parquet
+
             geohash_precision (int, optional): the geohash precision used to partition the data. Defaults to 2.
             max_cache_size (int, optional): the maximum size of monthly data to cache. Defaults to 100.
         """
@@ -36,7 +40,7 @@ class TemperatureMonthly(TemperatureBase):
         self.geohash_precision = geohash_precision
         self.max_cache_size = max_cache_size
 
-        # create a variable to hold all the monthly temperature data
+        # create a variable to hold all the monthly temperature data in order
         self.units = OrderedDict()
 
     def query(
@@ -55,15 +59,13 @@ class TemperatureMonthly(TemperatureBase):
         vd.check_month(month)
 
         # snap latitude and longitude to the nearest point on the grid, todo
-        (snapped_latitude, snapped_longitude), distance = self.snap(
-            latitude, longitude, self.seaerch_radius
-        )
+        (snapped_latitude, snapped_longitude), distance = self.snap(latitude, longitude)
 
         # Check if the distance is within the search radius
         vd.check_within_radius(self.search_radius, distance)
 
         # Convert the latitude and longitude to geohash, todo
-        geohash = self.geohash.encode(
+        geohash = pgh.encode(
             snapped_latitude, snapped_longitude, self.geohash_precision
         )
 
@@ -82,6 +84,19 @@ class TemperatureMonthly(TemperatureBase):
             logger.info(f"Temperature data not found for {latitude}, {longitude}")
             return None
         return temperature
+
+    def add_unit(
+        self,
+        year: int,
+        month: int,
+        geohash: str,
+        unit: TemperatureUnitBase,
+    ) -> None:
+        """add a unit to self.units to hold TemperatureMonthlyUnit instances"""
+        if len(self.units) >= self.max_cache_size:
+            # remove the oldest unit
+            self.units.popitem(last=False)
+        self.units[(year, month, geohash)] = unit
 
 
 class TemperatureMonthlyUnit(TemperatureUnitBase):
@@ -121,7 +136,10 @@ class TemperatureMonthlyUnit(TemperatureUnitBase):
         # build the filename
         self.filename = (
             Path(self.source_folder)
-            / f"monthly_{self.year}_{self.month:02}_{self.geohash}.parquet"
+            / f"year={self.year}"
+            / f"month={self.month}"
+            / f"geohash={self.geohash}"
+            / "data.parquet"
         )
         return self.filename
 
@@ -141,7 +159,9 @@ class TemperatureMonthlyUnit(TemperatureUnitBase):
 
     def load_from_remote(self):
         """load data from an API"""
-        pass
+        raise NotImplementedError(
+            f"{self.__class__.__name__} doesn't implement {self.load_from_remote.__name__} method"
+        )
 
     def query(self, latitude: float, longitude: float) -> float | None:
         """query the temperature value"""
@@ -150,14 +170,18 @@ class TemperatureMonthlyUnit(TemperatureUnitBase):
 
         # Check if the DataFrame is loaded
         if not hasattr(self, "_data") or self._data.empty:
-            logger.info(
-                "DataFrame is not loaded or is empty. Please load the data first."
-            )
             self._data = self.load()
 
-        value = self._data[
-            (self._data["latitude"] == latitude)
-            & (self._data["longitude"] == longitude)
-        ]["temperature_celsius_mean"].values[0]
+        tolerance = 1e-2
+        lat_close = np.isclose(self._data["latitude"], latitude, atol=tolerance)
+        lon_close = np.isclose(self._data["longitude"], longitude, atol=tolerance)
+
+        filter_data = self._data[lat_close & lon_close]
+        if filter_data.empty:
+            logger.info(f"Temperature data not found for {latitude}, {longitude}")
+            return None
+        else:
+            # get the temperature value
+            value = round(filter_data["temperature_celsius_mean"].values[0], 2)
 
         return value
