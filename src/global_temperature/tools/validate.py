@@ -1,12 +1,29 @@
 import pandas as pd
+from pathlib import Path
+import logging
+from .. import errors as err
 
 
-def check_file(file_path: str, file_format: str = "parquet") -> bool:
+logger = logging.getLogger(__name__)
+
+
+def check_file_format(file_path: str | Path, file_format: str = "parquet") -> bool:
     """
     Check if the file is a parquet file.
     """
-    if not file_path.endswith(f".{file_format}"):
+    if not str(file_path).endswith(f".{file_format}"):
         raise ValueError(f"File is not a {file_format} file: {file_path}")
+
+    return True
+
+
+def check_file_exists(file_path: str) -> bool:
+    """
+    Check if the file exists.
+    """
+    if not Path(file_path).exists():
+        logger.info(f"File {file_path} does not exist on local disk.")
+        raise FileNotFoundError(f"File {file_path} does not exist.")
 
     return True
 
@@ -62,4 +79,17 @@ def check_day(day: int) -> bool:
         raise ValueError(f"Day {day} is out of bounds.")
     if not isinstance(day, int):
         raise ValueError(f"Day {day} is not an integer.")
+    return True
+
+
+def check_within_radius(radius: float, distance: float) -> bool:
+    """
+    Check if distance is within the search radius.
+    """
+    if radius < 0:
+        raise ValueError(f"Search radius {radius} is negative.")
+    if distance > radius:
+        raise err.NoNearbyPointError(
+            f"Cannot find a valid point point on the grid nearby."
+        )
     return True

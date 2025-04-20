@@ -1,0 +1,5 @@
+grids:
+  default_grid_file: "grids/03x03/data.parquet"
+  default_grid_name: "03x03"
+logging:
+  level: "INFO"

@@ -1,0 +1,3 @@
+src/global_temperature/logs/*
+__pycache__
+src/global_temperature/data/*
