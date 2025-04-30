@@ -20,20 +20,22 @@ class TemperatureBase(ABC):
         """Abstract method that subclasses must implement."""
         pass
 
-    def snap(self, latitude: float, longitude: float) -> tuple[np.ndarray, float]:
+    def snap(
+        self, latitude: float, longitude: float, grid_name: str = "03x03"
+    ) -> tuple[np.ndarray, float]:
         """
         Snap the latitude and longitude to the nearest grid point.
         """
         # create a grid instance
         grid = Grids()
         grid.load_grid(
-            (PACKAGE_ROOT / CONFIG["grids"]["default_grid_file"]).resolve(),
-            CONFIG["grids"]["default_grid_name"],
+            (PACKAGE_ROOT / CONFIG["grids"][grid_name]["grid_file"]).resolve(),
+            CONFIG["grids"][grid_name]["grid_name"],
         )
 
         # snap to the nearest grid point
         point, distance = grid.query(
-            CONFIG["grids"]["default_grid_name"], latitude, longitude
+            CONFIG["grids"][grid_name]["grid_name"], latitude, longitude
         )
         return point, distance
 

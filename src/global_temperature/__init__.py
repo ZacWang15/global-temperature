@@ -59,7 +59,6 @@ def delete_old_logs(log_dir: Path, days: int = 7):
 
 
 log_dir = Path(__file__).parent / "logs"
-print(Path(__file__))
 log_dir.mkdir(exist_ok=True, parents=True)
 
 

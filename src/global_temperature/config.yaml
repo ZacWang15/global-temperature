@@ -1,5 +1,9 @@
 grids:
-  default_grid_file: "grids/03x03/data.parquet"
-  default_grid_name: "03x03"
+  03x03:
+    grid_file: "grids/03x03/data.parquet"
+    grid_name: "03x03"
+  01x01:
+    grid_file: "grids/01x01/data.parquet"
+    grid_name: "01x01"
 logging:
   level: "INFO"

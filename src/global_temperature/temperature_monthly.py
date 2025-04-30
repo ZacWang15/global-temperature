@@ -14,20 +14,22 @@ logger = logging.getLogger(__name__)
 class TemperatureMonthly(TemperatureBase):
     def __init__(
         self,
-        search_radius: float = 0.3,
+        search_radius: float = 0.1,
         source_folder: str | Path = "",
-        geohash_precision: int = 2,
+        geohash_precision: int = 1,
         max_cache_size: int = 200,
+        grid_name: str = "01x01",
     ) -> None:
         """Hold monthly temperature data
 
         Args:
-            search_radius (float, optional): the search radius in degrees to snap to the grid. Defaults to 0.3.
+            search_radius (float, optional): the search radius in degrees to snap to the grid. Defaults to 0.1.
             source_folder (str | Path): the path of the source data folder to read partitioned parquet files. In source folder, it should have a folder structure like this:
                 - source_folder / year={year}/ month={month}/{geohash}/data.parquet
 
-            geohash_precision (int, optional): the geohash precision used to partition the data. Defaults to 2.
-            max_cache_size (int, optional): the maximum size of monthly data to cache. Defaults to 100.
+            geohash_precision (int, optional): the geohash precision used to partition the data. Defaults to 1.
+            max_cache_size (int, optional): the maximum size of monthly data to cache in memory. Defaults to 200.
+            grid_name (str, optional): the name of the grid. Defaults to "01x01".
         """
         super().__init__()
         self.search_radius = search_radius
@@ -42,6 +44,8 @@ class TemperatureMonthly(TemperatureBase):
 
         # create a variable to hold all the monthly temperature data in order
         self.units = OrderedDict()
+
+        self.grid = grid_name
 
     def query(
         self,
