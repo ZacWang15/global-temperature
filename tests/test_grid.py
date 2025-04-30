@@ -4,8 +4,6 @@ from scipy.spatial import cKDTree
 import numpy as np
 from pathlib import Path
 
-print(Path(__file__).parent)
-
 
 # test the singleton pattern
 def test_singleton():
@@ -35,7 +33,10 @@ def test_load_grid():
 )
 def test_query_grid(latitude, longitude, expected_point, expected_distance):
     grid = Grids()
-    grid.load_grid(Path(__file__).parents[1] / "src/global_temperature/grids/03x03/data.parquet", "03x03")
+    grid.load_grid(
+        Path(__file__).parents[1] / "src/global_temperature/grids/03x03/data.parquet",
+        "03x03",
+    )
 
     point, distance = grid.query("03x03", latitude, longitude)
     assert isinstance(point, np.ndarray), "Query should return a tuple"

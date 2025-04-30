@@ -7,7 +7,10 @@ import numpy as np
 def monthly_instance():
     """Fixture to set up the TemperatureMonthly instance."""
     temp_monthly = TemperatureMonthly(
+        search_radius=0.3,
+        geohash_precision=2,
         max_cache_size=100,
+        grid_name="03x03",
     )
     return temp_monthly
 
