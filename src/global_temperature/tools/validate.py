@@ -2,7 +2,7 @@ import pandas as pd
 from pathlib import Path
 import logging
 from .. import errors as err
-
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +53,11 @@ def check_year(year: int) -> bool:
     """
     Check if the year is valid.
     """
-    if not (1950 <= year <= 2100):
+    if not isinstance(year, int):
+        raise ValueError(f"Year {year} is not an integer.")
+
+    latest_year = datetime.now().year
+    if not (1990 <= year <= latest_year):
         raise ValueError(f"Year {year} is out of bounds.")
     if not isinstance(year, int):
         raise ValueError(f"Year {year} is not an integer.")

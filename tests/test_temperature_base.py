@@ -26,6 +26,4 @@ def test_TemperatureBase():
     assert np.array_equal(
         point, np.array([-37.9, 145.0])
     ), "Query should return the correct point"
-    assert (
-        pytest.approx(distance, rel=1e-3) == 0.06802
-    ), "Distance should be correct"
+    assert pytest.approx(distance, rel=1e-3) == 0.06802, "Distance should be correct"

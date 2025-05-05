@@ -22,23 +22,27 @@ def test_load_grid():
     assert len(grid.grids["03x03"].data) > 0, "Grid should not be empty"
 
 
-# test querying a grid
+# test querying a grid of 0.3 x 0.3 degrees
 @pytest.mark.parametrize(
-    "latitude, longitude, expected_point, expected_distance",
+    "grid_name,latitude,longitude,expected_point,expected_distance",
     [
-        (-37.89994, 145.06802, np.array([-37.9, 145.0]), 0.06802),
-        (40.7128, -74.0060, np.array([40.7, -74.0]), 0.014136),
-        (34.0522, -118.2437, np.array([34.1, -118.1]), 0.15144),
+        ("03x03", -37.89994, 145.06802, np.array([-37.9, 145.0]), 0.06802),
+        ("03x03", 40.7128, -74.0060, np.array([40.7, -74.0]), 0.014136),
+        ("03x03", 34.0522, -118.2437, np.array([34.1, -118.1]), 0.15144),
+        ("01x01", -37.89994, 145.06802, np.array([-37.9, 145.1]), 0.03198),
+        ("01x01", 40.7128, -74.0060, np.array([40.7, -74.0]), 0.014136),
+        ("01x01", 34.0522, -118.2437, np.array([34.1, -118.2]), 0.064765),
     ],
 )
-def test_query_grid(latitude, longitude, expected_point, expected_distance):
+def test_query_grid(grid_name, latitude, longitude, expected_point, expected_distance):
     grid = Grids()
     grid.load_grid(
-        Path(__file__).parents[1] / "src/global_temperature/grids/03x03/data.parquet",
-        "03x03",
+        Path(__file__).parents[1]
+        / f"src/global_temperature/grids/{grid_name}/data.parquet",
+        grid_name,
     )
 
-    point, distance = grid.query("03x03", latitude, longitude)
+    point, distance = grid.query(grid_name, latitude, longitude)
     assert isinstance(point, np.ndarray), "Query should return a tuple"
     assert len(point) == 2, "Query should return a tuple of length 2"
     assert isinstance(distance, float), "Distance should be a float"
