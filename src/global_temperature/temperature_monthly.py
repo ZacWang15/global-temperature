@@ -45,7 +45,11 @@ class TemperatureMonthly(TemperatureBase):
         # create a variable to hold all the monthly temperature data in order
         self.units = OrderedDict()
 
-        self.grid = grid_name
+        self.grid_name = grid_name
+
+        logger.info(
+            f"TemperatureMonthly initialized with search_radius={search_radius}, source_folder={self.source_folder}, geohash_precision={geohash_precision}, max_cache_size={max_cache_size}, grid_name={grid_name}"
+        )
 
     def query(
         self,
@@ -53,7 +57,7 @@ class TemperatureMonthly(TemperatureBase):
         month: int,
         latitude: float,
         longitude: float,
-    ) -> float | None:
+    ) -> float:
         """
         Query the monthly temperature data based on latitude, longitude and year, month
         """
@@ -62,8 +66,14 @@ class TemperatureMonthly(TemperatureBase):
         vd.check_year(year)
         vd.check_month(month)
 
+        logger.info(
+            f"Querying temperature data for {year}-{month} at {latitude}, {longitude}"
+        )
+
         # snap latitude and longitude to the nearest point on the grid, todo
-        (snapped_latitude, snapped_longitude), distance = self.snap(latitude, longitude)
+        (snapped_latitude, snapped_longitude), distance = self.snap(
+            latitude, longitude, self.grid_name
+        )
 
         # Check if the distance is within the search radius
         vd.check_within_radius(self.search_radius, distance)
@@ -71,6 +81,9 @@ class TemperatureMonthly(TemperatureBase):
         # Convert the latitude and longitude to geohash, todo
         geohash = pgh.encode(
             snapped_latitude, snapped_longitude, self.geohash_precision
+        )
+        logger.info(
+            f"Snapped coordinates: {snapped_latitude}, {snapped_longitude}, geohash: {geohash}"
         )
 
         # Check if monthly data already loaded before
@@ -86,7 +99,11 @@ class TemperatureMonthly(TemperatureBase):
 
         if temperature is None:
             logger.info(f"Temperature data not found for {latitude}, {longitude}")
-            return None
+            return float("-inf")
+
+        logger.info(
+            f"Temperature data found for {latitude}, {longitude}: {temperature}"
+        )
         return temperature
 
     def add_unit(
@@ -186,6 +203,6 @@ class TemperatureMonthlyUnit(TemperatureUnitBase):
             return None
         else:
             # get the temperature value
-            value = round(filter_data["temperature_celsius_mean"].values[0], 2)
+            value = filter_data["temperature_celsius_mean"].values[0]
 
         return value
