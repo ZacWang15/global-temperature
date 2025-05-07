@@ -2,6 +2,10 @@ import logging
 from datetime import datetime
 from pathlib import Path
 import time
+from .config import load_config
+
+# Load the configuration
+CONFIG = load_config()
 
 # Package-level logger
 logger = logging.getLogger(__name__)
@@ -28,7 +32,7 @@ if not logger.handlers:
     logger.addHandler(handler)
 
     # Set the logging level
-    logger.setLevel(logging.INFO)
+    logger.setLevel(CONFIG["logging"]["level"])
     # Prevent the logger from propagating to the root logger
     logger.propagate = False
 
@@ -62,5 +66,5 @@ log_dir = Path(__file__).parent / "logs"
 log_dir.mkdir(exist_ok=True, parents=True)
 
 
-# Delete logs older than 7 days
-delete_old_logs(log_dir, days=7)
+# Delete logs older than rention_period
+delete_old_logs(log_dir, days=CONFIG["logging"]["rention_period"])
