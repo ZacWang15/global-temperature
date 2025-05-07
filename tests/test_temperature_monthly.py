@@ -97,3 +97,20 @@ def test_TemperatureMonthly_2(
     assert np.isclose(
         temperature, expected_temperature, rtol=1e-2
     ), f"Expected temperature: {expected_temperature}, but got: {temperature}"
+
+
+def test_TemperatureMonthly_file_not_found():
+    """Test case to check FileNotFoundError is raised when data file is missing."""
+    with pytest.raises(FileNotFoundError):
+        temp_monthly = TemperatureMonthly(
+            search_radius=0.1,
+            geohash_precision=1,
+            max_cache_size=100,
+            grid_name="01x01",
+        )
+        temp_monthly.query(
+            year=2023,
+            month=1,
+            latitude=10.0,
+            longitude=10.0,
+        )

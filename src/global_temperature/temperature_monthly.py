@@ -6,9 +6,11 @@ from .tools import validate as vd
 from collections import OrderedDict
 import pygeohash as pgh
 import numpy as np
+from .config import load_config, PACKAGE_ROOT
 
 
 logger = logging.getLogger(__name__)
+CONFIG = load_config()
 
 
 class TemperatureMonthly(TemperatureBase):
@@ -37,7 +39,7 @@ class TemperatureMonthly(TemperatureBase):
         # set default source folder
         self.source_folder = source_folder
         if not source_folder:
-            self.source_folder = Path(__file__).parent / "data" / "monthly"
+            self.source_folder = PACKAGE_ROOT / CONFIG["default_monthly_data_location"]
 
         self.geohash_precision = geohash_precision
         self.max_cache_size = max_cache_size
@@ -169,7 +171,12 @@ class TemperatureMonthlyUnit(TemperatureUnitBase):
         if self.file_exist:
             df = self.load_from_local()
         else:
-            df = self.load_from_remote()
+            # if the file doesn't exist, load from API (not implemented yet)
+            # df = self.load_from_remote()
+
+            raise FileNotFoundError(
+                f"File {self.filename} does not exist. Please check the file path."
+            )
         return df
 
     def load_from_local(self) -> pd.DataFrame:
