@@ -3,7 +3,10 @@ from pathlib import Path
 import logging
 from .. import errors as err
 from datetime import datetime
+from ..config import load_config
 
+
+CONFIG = load_config()
 logger = logging.getLogger(__name__)
 
 
@@ -57,10 +60,8 @@ def check_year(year: int) -> bool:
         raise ValueError(f"Year {year} is not an integer.")
 
     latest_year = datetime.now().year
-    if not (1990 <= year <= latest_year):
+    if not (CONFIG["monthly_data"]["start_year"] <= year <= latest_year):
         raise ValueError(f"Year {year} is out of bounds.")
-    if not isinstance(year, int):
-        raise ValueError(f"Year {year} is not an integer.")
     return True
 
 
