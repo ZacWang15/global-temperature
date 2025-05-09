@@ -67,9 +67,9 @@ def download(
         file_name = f"year={year}.tar.xz"
         file_path = target_path / file_name
 
+        success = False
         retries = 0
         while retries < max_tries and not success:
-            logger.info(f"Attempt {retries + 1}")
             success = download_file(file_path, url)
             if success:
                 break

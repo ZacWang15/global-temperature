@@ -9,8 +9,8 @@ import shutil
 import pytest
 
 
-def test_download():
-    """Test the download function"""
+def test_download_functions():
+    """Test the download functions"""
     data_type = "monthly"
     year = 2024
 
@@ -60,3 +60,35 @@ def test_download_invalid_years(years):
             target_path=target_folder,
             years=years,
         )
+
+
+def test_download():
+    """Test the download function"""
+    data_type = "monthly"
+    years = [2000, 2021]
+    target_folder = "tests/data"
+
+    # Test downloading a file
+    failed_years = download(
+        target_path=target_folder,
+        years=years,
+        data_type=data_type,
+        max_tries=2,
+        delete_archived_files=True,
+    )
+
+    # Check if the file exists
+    assert not failed_years, f"Download failed for the following years: {failed_years}"
+
+    # Check if the files were downloaded
+    for year in years:
+        # .tar.xz files are supposed to be deleted when delete_archived_files is True
+        local_path = Path(target_folder) / f"{data_type}" / f"year={year}.tar.xz"
+        assert not local_path.exists(), f"File {local_path} was not downloaded."
+
+        # Check if the extraction was successful
+        extract_path = local_path.parent / str(local_path.name).split(".")[0]
+        assert extract_path.exists(), f"Extraction failed for {local_path}."
+
+    # Clean up
+    shutil.rmtree(target_folder, ignore_errors=True)
