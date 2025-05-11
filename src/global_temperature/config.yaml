@@ -5,7 +5,7 @@ grids:
   01x01:
     grid_file: "grids/01x01/data.parquet"
     grid_name: "01x01"
-default_monthly_data_location: "data/monthly/"
+default_monthly_data_location: "data/"
 monthly_data:
   start_year: 1990
 base_url: "https://global-temperature.com"

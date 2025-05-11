@@ -47,8 +47,8 @@ def test_TemperatureMonthly_1(
     )
 
     assert np.isclose(
-        temperature, expected_temperature, rtol=1e-2
-    ), f"Expected temperature: {expected_temperature}, but got: {temperature}"
+        temperature["temperature"], expected_temperature, rtol=1e-2
+    ), f"Expected temperature: {expected_temperature}, but got: {temperature['temperature']}"
 
 
 @pytest.fixture
@@ -95,8 +95,8 @@ def test_TemperatureMonthly_2(
     )
 
     assert np.isclose(
-        temperature, expected_temperature, rtol=1e-2
-    ), f"Expected temperature: {expected_temperature}, but got: {temperature}"
+        temperature["temperature"], expected_temperature, rtol=1e-2
+    ), f"Expected temperature: {expected_temperature}, but got: {temperature['temperature']}"
 
 
 def test_TemperatureMonthly_file_not_found():

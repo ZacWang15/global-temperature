@@ -20,6 +20,7 @@ def download(
     max_tries: int = 2,
     data_type: str = "monthly",
     delete_archived_files: bool = True,
+    overwrite: bool = False,
 ) -> List[int]:
     """
     Downloads data from Cloudflare R2 for the specified years or range of years.
@@ -32,6 +33,7 @@ def download(
         max_tries (int, optional): The maximum number of download attempts. Defaults to 2.
         data_type (str): The type of data to download. Currently, only "monthly" is supported.
         delete_archived_files (bool): Whether to delete the archived files after extraction.
+        overwrite (bool): Whether to overwrite existing files. e.g. If monthly/year=2021 folder exist, skip downloading this year. Defaults to False.
 
     Returns:
         List[int]: A list of years for which the download failed.
@@ -66,6 +68,11 @@ def download(
 
         file_name = f"year={year}.tar.xz"
         file_path = target_path / file_name
+
+        # Check if the year={year} folder already exists
+        if overwrite is False and (target_path / f"year={year}").is_dir():
+            logger.info(f"Skipping download for {year}. Folder already exists.")
+            continue
 
         success = False
         retries = 0

@@ -106,7 +106,13 @@ class TemperatureMonthly(TemperatureBase):
         logger.info(
             f"Temperature data found for {latitude}, {longitude}: {temperature}"
         )
-        return temperature
+        return {
+            "temperature": temperature,
+            "geohash": geohash,
+            "distance": distance,
+            "snapped_latitude": snapped_latitude,
+            "snapped_longitude": snapped_longitude,
+        }
 
     def add_unit(
         self,
@@ -159,6 +165,7 @@ class TemperatureMonthlyUnit(TemperatureUnitBase):
         # build the filename
         self.filename = (
             Path(self.source_folder)
+            / "monthly"
             / f"year={self.year}"
             / f"month={self.month}"
             / f"geohash={self.geohash}"
