@@ -27,10 +27,10 @@ temperature_monthly = gt.TemperatureFactory.create_temperature_object(
 )
 
 # Query the temperature for a specific year, month, latitude, and longitude
-year = 2021
-month = 1
-latitude = 37.7749
-longitude = -122.4194
+year = 2025
+month = 4
+latitude = -37.81855964
+longitude = 144.99806817
 temp = temperature_monthly.query(year, month, latitude, longitude)
 print(
     f"Temperature in {year}-{month} at ({latitude}, {longitude}): {temp['temperature']} °C"

@@ -98,9 +98,6 @@ class TemperatureMonthly(TemperatureBase):
         geohash = pgh.encode(
             snapped_latitude, snapped_longitude, self.geohash_precision
         )
-        logger.info(
-            f"Snapped coordinates: {snapped_latitude}, {snapped_longitude}, geohash: {geohash}"
-        )
 
         # Check if monthly data already loaded before
         if (year, month, geohash) not in self.units:
@@ -115,11 +112,8 @@ class TemperatureMonthly(TemperatureBase):
 
         if temperature is None:
             logger.info(f"Temperature data not found for {latitude}, {longitude}")
-            return float("-inf")
+            temperature = np.float32("-inf")
 
-        logger.info(
-            f"Temperature data found for {latitude}, {longitude}: {temperature}"
-        )
         return {
             "temperature": temperature,
             "geohash": geohash,
