@@ -3,6 +3,8 @@ from datetime import datetime
 from pathlib import Path
 import time
 from .config import load_config
+from .temperature import TemperatureFactory
+
 
 # Load the configuration
 CONFIG = load_config()

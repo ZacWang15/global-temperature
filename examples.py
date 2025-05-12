@@ -15,13 +15,13 @@ target_path = "examples/data"
 
 # Or can you specify the years that you want to download
 years = [2021, 2022, 2023, 2025]
-failed_years = download(years=years, target_path=target_path)
+# failed_years = download(years=years, target_path=target_path)
 
 # 2. After downloading the file, you can query any locations
-from global_temperature.temperature_monthly import TemperatureMonthly
+import global_temperature as gt
 
-# Create a TemperatureMonthly object
-temperature_monthly = TemperatureMonthly(
+temperature_monthly = gt.TemperatureFactory.create_temperature_object(
+    data_type="monthly",
     # specify the folder that you downloaded the data (if possible, use abosolute path)
     source_folder=target_path,
 )
