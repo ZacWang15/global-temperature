@@ -62,8 +62,7 @@ class Grids(metaclass=SingletonMeta):
         # Query the nearest point.
         distance, index = tree.query([latitude, longitude])
 
-        # Return the coordinates of the nearest point and round point 1 decimal place. 
-        return  np.round(tree.data[index], decimals=1), distance
-
-
-
+        # Convert the distance to np.float32 and return the coordinates of the nearest point.
+        return np.round(tree.data[index], decimals=1).astype(np.float32), np.float32(
+            distance
+        )

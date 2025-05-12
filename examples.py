@@ -14,7 +14,7 @@ target_path = "examples/data"
 # )
 
 # Or can you specify the years that you want to download
-years = [2021, 2022, 2023]
+years = [2021, 2022, 2023, 2025]
 failed_years = download(years=years, target_path=target_path)
 
 # 2. After downloading the file, you can query any locations

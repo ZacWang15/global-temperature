@@ -6,6 +6,7 @@ from .validate import check_year
 from ..config import load_config
 from urllib.parse import urljoin
 import logging
+from datetime import datetime
 
 
 CONFIG = load_config()
@@ -69,8 +70,12 @@ def download(
         file_name = f"year={year}.tar.xz"
         file_path = target_path / file_name
 
-        # Check if the year={year} folder already exists
-        if overwrite is False and (target_path / f"year={year}").is_dir():
+        # Check if the year={year} folder already exists. For current year, we must overwrite it in case there is a new monthly data.
+        if (
+            overwrite is False
+            and (target_path / f"year={year}").is_dir()
+            and year != datetime.now().year
+        ):
             logger.info(f"Skipping download for {year}. Folder already exists.")
             continue
 

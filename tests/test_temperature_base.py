@@ -23,7 +23,7 @@ def test_TemperatureBase():
     # Test snap()
     point, distance = temp.snap(-37.89994, 145.06802)
 
-    assert np.array_equal(
+    assert np.allclose(
         point, np.array([-37.9, 145.0])
     ), "Query should return the correct point"
     assert pytest.approx(distance, rel=1e-3) == 0.06802, "Distance should be correct"

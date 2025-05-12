@@ -59,9 +59,23 @@ class TemperatureMonthly(TemperatureBase):
         month: int,
         latitude: float,
         longitude: float,
-    ) -> float:
+    ) -> dict:
         """
         Query the monthly temperature data based on latitude, longitude and year, month
+
+        Args:
+            year (int): The year for which the temperature data is queried.
+            month (int): The month for which the temperature data is queried.
+            latitude (float): The latitude of the location.
+            longitude (float): The longitude of the location.
+
+        Returns:
+            dict: A dictionary containing the following keys:
+                - temperature (np.float32): The queried temperature value in Celsius.
+                - geohash (str): The geohash of the snapped coordinates.
+                - distance (np.float32): The distance between the input and snapped coordinates.
+                - snapped_latitude (np.float32): The snapped latitude on the grid.
+                - snapped_longitude (np.float32): The snapped longitude on the grid.
         """
         # validate the input parameters such year, month, latitude and longitude
         vd.check_coordinates(latitude, longitude)

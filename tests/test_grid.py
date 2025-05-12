@@ -45,10 +45,8 @@ def test_query_grid(grid_name, latitude, longitude, expected_point, expected_dis
     point, distance = grid.query(grid_name, latitude, longitude)
     assert isinstance(point, np.ndarray), "Query should return a tuple"
     assert len(point) == 2, "Query should return a tuple of length 2"
-    assert isinstance(distance, float), "Distance should be a float"
-    assert np.array_equal(
-        point, expected_point
-    ), "Query should return the correct point"
+    assert isinstance(distance, np.float32), "Distance should be a np.float32"
+    assert np.allclose(point, expected_point), "Query should return the correct point"
     assert (
         pytest.approx(distance, rel=1e-3) == expected_distance
     ), "Distance should be correct"
