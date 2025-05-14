@@ -15,7 +15,8 @@ dependencies = [
     "pytest (>=8.3.5,<9.0.0)",
     "scipy (>=1.15.2,<2.0.0)",
     "pyyaml (>=6.0.2,<7.0.0)",
-    "requests (>=2.32.3,<3.0.0)"
+    "requests (>=2.32.3,<3.0.0)",
+    "pandera[pandas] (>=0.23.1,<0.24.0)"
 ]
 
 [tool.poetry]

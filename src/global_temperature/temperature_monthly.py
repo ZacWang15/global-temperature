@@ -7,6 +7,8 @@ from collections import OrderedDict
 import pygeohash as pgh
 import numpy as np
 from .config import load_config, PACKAGE_ROOT
+import pandera as pa
+from pandera import Column, Check
 
 
 logger = logging.getLogger(__name__)
@@ -198,7 +200,43 @@ class TemperatureMonthlyUnit(TemperatureUnitBase):
         """load data from a file"""
         logger.info(f"Loading data from {self.filename}")
         self.df = pd.read_parquet(self.filename)
+        # validate the DataFrame
+        self.validate_dataframe(self.df)
         return self.df
+
+    def validate_dataframe(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Validate the DataFrame using pandera."""
+
+        # Define the schema
+        schema = pa.DataFrameSchema(
+            {
+                "date": Column(pa.DateTime, nullable=True),
+                "longitude": Column(
+                    pa.Float64,
+                    checks=[
+                        Check.in_range(-180.0, 180.0, error="Longitude out of range")
+                    ],
+                    nullable=False,
+                ),
+                "latitude": Column(
+                    pa.Float64,
+                    checks=[Check.in_range(-90.0, 90.0, error="Latitude out of range")],
+                    nullable=False,
+                ),
+                "temperature_celsius_mean": Column(pa.Float32, nullable=True),
+                "geohash_l1": Column(
+                    pa.String,
+                    # level‑1 geohash is one character
+                    Check.str_length(1),
+                    nullable=False,
+                ),
+            },
+            # Attempts to coerce dtypes to the defined types if possible
+            coerce=False,
+        )
+
+        # Validate the DataFrame
+        schema.validate(df)
 
     def load_from_remote(self):
         """load data from an API"""
