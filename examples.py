@@ -19,9 +19,12 @@ target_path = "examples/data"
 # )
 
 # Method2: you can specify the years that you want to download
-years = [2021, 2022, 2025]
+years = [2020, 2022, 2025]
 failed_years = download(years=years, target_path=target_path)
-
+if failed_years:
+    raise Exception(
+        f"Failed to download the following years: {', '.join(map(str, failed_years))}"
+    )
 
 # 2. After downloading the file, you can query any locations globally (only land areas are supported)
 # The tool will automatically find the nearest grid point to the specified location and return the temperature data.
