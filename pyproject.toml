@@ -29,3 +29,8 @@ black = "^25.1.0"
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry.urls]
+homepage = "https://github.com/ZacWang15/global-temperature"
+repository = "https://github.com/ZacWang15/global-temperature"
