@@ -1,29 +1,25 @@
-# Global Temperature Python library
+# Global Temperature
 
-This project provides temperature (celsius degree) globally in land area by 0.3 degree x 0.3 degree grids.
+This project provides average monthly temperature (celsius degree) globally in land area by 0.1 degree x 0.1 degree grids.
 
-The data is at monthly interval from 1950 till now and dataset will update every month.
+The data is at monthly interval from 1990 till now and dataset will update every month.
 
-## How to use
 The tool can match a latitude, longitude point to the nearest point in the grid and return the celsius degree according to year, month you pass to it.
 
+## Install
 
 
-## Source of data
+## How to use
 
-The raw data was collected from [ECMWF - ERA5](https://cds.climate.copernicus.eu/datasets).
+You can find usage examples in the [`examples.py`](examples.py) file.
 
-ERA5 collects data from both satellite imagery and surface monitoring spots. It is a global climate reanalysis product developed by the European Centre for Medium-Range Weather Forecasts (ECMWF), which combines vast amounts of historical observations into a consistent dataset.
+[View the examples.py file](https://github.com/ZacWang15/global-temperature/blob/master/examples.py)
 
 
-## License
-For temperature data, please refer to the European Centre for Medium-Range Weather Forecasts (ECMWF)
+## Code License
+The code in this project is licensed under the [MIT License](LICENSE). You are free to use, modify, and distribute it for any purpose.
 
-https://apps.ecmwf.int/datasets/licences/copernicus/
+## Data License
+This project relies on data from the ERA5 dataset, provided by the European Centre for Medium-Range Weather Forecasts (ECMWF). The ERA5 data is governed by the [Copernicus Licence Agreement](https://apps.ecmwf.int/datasets/licences/copernicus/).
 
-```
-4. Licence Permission
-4.1. This Licence is free of charge, worldwide, non-exclusive, royalty free and perpetual.
-
-4.2. Access to Copernicus Products is given for any purpose in so far as it is lawful, whereas use may include, but is not limited to: reproduction; distribution; communication to the public; adaptation, modification and combination with other data and information; or any combination of the foregoing.
-```
+By using this project, you agree to comply with the terms of the Copernicus Licence Agreement when accessing or using ERA5 data.
