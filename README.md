@@ -11,7 +11,8 @@ The yellow area in the [photo](https://global-temperature.com/coverage.png) is t
 
 
 ## Install
-
+Require Python >= 3.10
+> pip install global-temperature
 
 ## How to use
 
