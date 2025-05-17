@@ -2,9 +2,13 @@
 
 This project provides average monthly temperature (celsius degree) globally in land area by 0.1 degree x 0.1 degree grids.
 
-The data is at monthly interval from 1990 till now and dataset will update every month.
+The data is at monthly interval from 1990 till now and dataset will update every month for the current year.
 
 The tool can match a latitude, longitude point to the nearest point in the grid and return the celsius degree according to year, month you pass to it.
+
+## Converage
+The yellow area in the [photo](https://global-temperature.com/coverage.png) is the coverage of the project.
+
 
 ## Install
 
