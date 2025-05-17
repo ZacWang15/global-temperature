@@ -18,9 +18,6 @@ Require Python >= 3.10
 
 You can find usage examples in the [`examples.py`](examples.py) file.
 
-[View the examples.py file](https://github.com/ZacWang15/global-temperature/blob/master/examples.py)
-
-
 ## Anti-pattern
 To use this Python library, you need to download the data first. Please avoid repeatedly downloading the same data, as this service is provided for free and is not intended to handle excessive or redundant downloads. Download the data once and store it locally for reuse.
 
