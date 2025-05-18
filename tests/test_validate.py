@@ -25,7 +25,7 @@ def test_check_year():
     assert vd.check_year(1970) is True
 
     with pytest.raises(ValueError):
-        vd.check_year(1989)
+        vd.check_year(1969)
 
     with pytest.raises(ValueError):
         vd.check_year(2026)
