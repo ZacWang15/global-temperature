@@ -7,7 +7,7 @@ grids:
     grid_name: "01x01"
 default_monthly_data_location: "data/"
 monthly_data:
-  start_year: 1950
+  start_year: 1970
 base_url: "https://global-temperature.com"
 logging:
   level: "INFO"
