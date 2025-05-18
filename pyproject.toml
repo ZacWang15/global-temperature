@@ -1,6 +1,6 @@
 [project]
 name = "global-temperature"
-version = "0.1.2"
+version = "0.1.3"
 description = ""
 authors = [
     {name = "zacwang",email = "zacwang15@gmail.com"}
