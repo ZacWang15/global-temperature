@@ -1,6 +1,6 @@
 from global_temperature.tools.download import download
 
-# 1. Download the data. The available range of years is from 1990 to 2025.
+# 1. Download the data. The available range of years is from 1970 to 2025.
 # This is not an API service, so please don't abuse the API. If possible, please download the data only once.
 
 # specify a path where you want to download the data. An absolute path is recommended.

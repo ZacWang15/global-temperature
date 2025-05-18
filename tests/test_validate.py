@@ -22,7 +22,7 @@ def test_check_year():
     Test the check_year function.
     """
     assert vd.check_year(2023) is True
-    assert vd.check_year(1990) is True
+    assert vd.check_year(1970) is True
 
     with pytest.raises(ValueError):
         vd.check_year(1989)
