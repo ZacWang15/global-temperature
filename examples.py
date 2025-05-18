@@ -48,8 +48,17 @@ temp = temperature_monthly.query(year, month, latitude, longitude)
 print(
     f"Temperature in {year}-{month} at ({latitude}, {longitude}): {temp['temperature']} °C"
 )
-print(temp)
+#  Temperature in 2025-4 at (-38.2551, 145.2414): 17.17852783203125 °C
 
+
+# temp is a dictionary that contains the following keys:
+# - temperature: the temperature in Celsius
+# - geohash: the geohash of the nearest grid point
+# - distance: the distance in degrees between the specified location and the nearest grid point
+# - snapped_latitude: the latitude of the nearest grid point
+# - snapped_longitude: the longitude of the nearest grid point
+print(temp)
+# {'temperature': np.float32(17.178528), 'geohash': 'r', 'distance': np.float32(0.061073482), 'snapped_latitude': np.float32(-38.3), 'snapped_longitude': np.float32(145.2)}
 
 # 3. When there is not grid point within the search radius, the tool will raise an exception.
 # You can catch the exception and handle it as you like.
