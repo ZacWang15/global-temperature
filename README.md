@@ -13,6 +13,15 @@ The tool can match any latitude/longitude point to the nearest grid point and re
 ## Coverage
 The yellow areas in this [coverage map](https://global-temperature.com/coverage.png) show the geographical coverage of the project.
 
+## Data Architecture
+
+The temperature data is partitioned by year, month, and geohash, resulting in small, focused data files ranging from 10KB to 500KB each. This efficient partitioning strategy offers several advantages:
+
+- **API-Friendly**: Small file sizes make the data suitable for serving behind APIs
+- **Fast Loading**: Only relevant data partitions are loaded on-demand
+- **Memory Efficient**: Reduced memory footprint with targeted data access
+- **Scalable**: Easy to cache and distribute individual partitions
+
 ## Quick Start
 
 ### Installation
