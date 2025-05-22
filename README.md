@@ -182,4 +182,4 @@ Issues and pull requests are welcome! Please feel free to contribute to this pro
 
 ## Support
 
-If you encounter any problems or have questions, please [open an issue](https://github.com/yourusername/global-temperature/issues) on GitHub.
+If you encounter any problems or have questions, please [open an issue](https://github.com/ZacWang15/global-temperature/issues) on GitHub.
