@@ -55,7 +55,7 @@ After downloading, you can query temperature data for any location globally (lan
 ```python
 import global_temperature as gt
 
-# Create temperature object. You only need to create it once.
+# Create a temperature object. You only need to create it once.
 temperature_monthly = gt.TemperatureFactory.create_temperature_object(
     data_type="monthly",
     source_folder=target_path,  # Path where you downloaded the data
@@ -73,6 +73,13 @@ temp = temperature_monthly.query(year, month, latitude, longitude)
 print(f"Temperature in {year}-{month} at ({latitude}, {longitude}): {temp['temperature']} °C")
 # Output: Temperature in 2025-4 at (-38.2551, 145.2414): 17.17852783203125 °C
 ```
+
+### Key Parameters of create_temperature_object()
+
+- **search_radius**: Maximum distance (in degrees) to search for the nearest grid point
+- **data_type**: Currently supports "monthly" for monthly temperature data
+- **source_folder**: Directory containing the downloaded temperature data files
+- **max_cache_size**: Maximum number of data partitions to keep in memory cache. Each partition represents one year/month/geohash combination.
 
 ### 3. Understanding the Response
 
@@ -105,12 +112,7 @@ except NoNearbyPointError as e:
     print(f"No nearby point found: {e}")
 ```
 
-### Key Parameters
 
-- **search_radius**: Maximum distance (in degrees) to search for the nearest grid point
-- **data_type**: Currently supports "monthly" for monthly temperature data
-- **source_folder**: Directory containing the downloaded temperature data files
-- **max_cache_size**: Maximum number of data partitions to keep in memory cache. Each partition represents one year/month/geohash combination.
 
 ## Anti-pattern
 To use this Python library, you need to download the data first. Please avoid repeatedly downloading the same data, as this service is provided for free and is not intended to handle excessive or redundant downloads. Download the data once and store it locally for reuse.
