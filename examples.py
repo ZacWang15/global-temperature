@@ -30,6 +30,7 @@ if failed_years:
 # The tool will automatically find the nearest grid point to the specified location and return the temperature data.
 import global_temperature as gt
 
+# Initialize a temperature object. You only need to create it once.
 temperature_monthly = gt.TemperatureFactory.create_temperature_object(
     data_type="monthly",
     # specify the folder that you downloaded the data (if possible, use abosolute path)
@@ -37,6 +38,10 @@ temperature_monthly = gt.TemperatureFactory.create_temperature_object(
     # specify search radius in degrees, the default is 0.1 degrees
     # this means the tool will find the nearest grid point within 0.1 degrees. You can increase the value to get a larger search radius.
     search_radius=0.1,
+    # Maximum number of data partitions to keep in memory cache (default: 200).
+    # Each partition represents one year/month/geohash combination.
+    # Increase for better performance with more memory usage.
+    max_cache_size=200,
 )
 
 # Query the temperature for a specific year, month, latitude, and longitude
