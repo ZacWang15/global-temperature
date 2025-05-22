@@ -3,3 +3,4 @@ __pycache__
 src/global_temperature/data/*
 examples/*
 dist/*
+**/.DS_Store
