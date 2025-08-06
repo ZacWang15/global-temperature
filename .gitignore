@@ -4,3 +4,9 @@ src/global_temperature/data/*
 examples/*
 dist/*
 **/.DS_Store
+
+# Coverage reports
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/

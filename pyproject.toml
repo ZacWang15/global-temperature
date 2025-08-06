@@ -26,6 +26,7 @@ packages = [{include = "global_temperature", from = "src"}]
 
 [tool.poetry.group.dev.dependencies]
 black = "^25.1.0"
+pytest-cov = "^6.2.1"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
@@ -35,3 +36,34 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.urls]
 homepage = "https://github.com/ZacWang15/global-temperature"
 repository = "https://github.com/ZacWang15/global-temperature"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = [
+    "--cov=src/global_temperature",
+    "--cov-report=html",
+    "--cov-report=term-missing",
+    "--cov-report=xml",
+    "--cov-fail-under=80"
+]
+
+[tool.coverage.run]
+source = ["src/global_temperature"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/.venv/*"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:"
+]
