@@ -6,7 +6,7 @@
 
 This project provides average monthly temperature (Celsius) globally for land areas using 0.1° × 0.1° grids.
 
-The data spans from 1970-01 to 2025-07 with monthly intervals, and the dataset is updated monthly for the current year.
+The data spans from 1970-01 to 2025-08 with monthly intervals, and the dataset is updated monthly for the current year.
 
 The tool can match any latitude/longitude point to the nearest grid point and return the temperature for a specified year and month.
 
