@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 def download(
-    target_path: str,
+    target_path: str | Path,
     years: Union[List[int], None] = None,
     start_year: Union[int, None] = None,
     end_year: Union[int, None] = None,
