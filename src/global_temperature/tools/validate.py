@@ -20,7 +20,7 @@ def check_file_format(file_path: str | Path, file_format: str = "parquet") -> bo
     return True
 
 
-def check_file_exists(file_path: str) -> bool:
+def check_file_exists(file_path: str | Path) -> bool:
     """
     Check if the file exists.
     """

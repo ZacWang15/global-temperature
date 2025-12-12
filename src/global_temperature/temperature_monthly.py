@@ -143,7 +143,7 @@ class TemperatureMonthlyUnit(TemperatureUnitBase):
     read a single monthly temperature data file
     """
 
-    def __init__(self, source_folder: str, year: int, month: int, geohash: str) -> None:
+    def __init__(self, source_folder: str | Path, year: int, month: int, geohash: str) -> None:
         super().__init__()
         self.source_folder = source_folder
         self.year = year
