@@ -4,10 +4,20 @@ from .config import load_config, PACKAGE_ROOT
 from pathlib import Path
 import numpy as np
 import logging
+from typing import TypedDict
 
 
 CONFIG = load_config()
 logger = logging.getLogger(__name__)
+
+
+class TemperatureQueryResult(TypedDict):
+    """Result structure for temperature queries."""
+    temperature: np.float32
+    geohash: str
+    distance: np.float32
+    snapped_latitude: np.float32
+    snapped_longitude: np.float32
 
 
 class TemperatureBase(ABC):
@@ -16,7 +26,7 @@ class TemperatureBase(ABC):
     """
 
     @abstractmethod
-    def query(self):
+    def query(self, year: int, month: int, latitude: float, longitude: float) -> TemperatureQueryResult:
         """Abstract method that subclasses must implement."""
         pass
 

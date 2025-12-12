@@ -1,4 +1,4 @@
-from .temperature_base import TemperatureBase, TemperatureUnitBase
+from .temperature_base import TemperatureBase, TemperatureUnitBase, TemperatureQueryResult
 from pathlib import Path
 import pandas as pd
 import logging
@@ -61,7 +61,7 @@ class TemperatureMonthly(TemperatureBase):
         month: int,
         latitude: float,
         longitude: float,
-    ) -> dict:
+    ) -> TemperatureQueryResult:
         """
         Query the monthly temperature data based on latitude, longitude and year, month
 
@@ -72,7 +72,7 @@ class TemperatureMonthly(TemperatureBase):
             longitude (float): The longitude of the location.
 
         Returns:
-            dict: A dictionary containing the following keys:
+            TemperatureQueryResult: A dictionary containing the following keys:
                 - temperature (np.float32): The queried temperature value in Celsius.
                 - geohash (str): The geohash of the snapped coordinates.
                 - distance (np.float32): The distance between the input and snapped coordinates.

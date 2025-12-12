@@ -4,6 +4,7 @@ from pathlib import Path
 import time
 from .config import load_config
 from .temperature import TemperatureFactory
+from .temperature_base import TemperatureQueryResult
 
 
 # Load the configuration
