@@ -160,6 +160,7 @@ class TemperatureMonthlyUnit(TemperatureUnitBase):
             vd.check_file_exists(self.filename)
         except FileNotFoundError:
             self.file_exist = False
+            raise
         else:
             self.file_exist = True
 
