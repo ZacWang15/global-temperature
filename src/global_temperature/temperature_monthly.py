@@ -117,7 +117,7 @@ class TemperatureMonthly(TemperatureBase):
             temperature = float("-inf")
 
         return {
-            "temperature": float(temperature),
+            "temperature": round(float(temperature), 2),
             "geohash": str(geohash),
             "distance": float(distance),
             "snapped_latitude": float(snapped_latitude),

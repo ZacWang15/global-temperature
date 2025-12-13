@@ -28,7 +28,7 @@ def monthly_instance():
         (2011, 3, 34.0522, -118.2437, 12.88),
         (2011, 6, 34.0522, -118.2437, 19.01),
         (2011, 9, 34.0522, -118.2437, 22.57),
-        (2011, 12, 34.0522, -118.2437, 10.34),
+        (2011, 12, 34.0522, -118.2437, 10.35),
     ],
 )
 def test_TemperatureMonthly(
@@ -47,8 +47,8 @@ def test_TemperatureMonthly(
         longitude=longitude,
     )
 
-    assert np.isclose(
-        temperature["temperature"], expected_temperature, rtol=1e-2
+    assert (
+        temperature["temperature"] == expected_temperature
     ), f"Expected temperature: {expected_temperature}, but got: {temperature['temperature']}"
 
 
