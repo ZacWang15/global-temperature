@@ -5,6 +5,7 @@ from pathlib import Path
 import numpy as np
 import logging
 from typing import TypedDict
+import pandas as pd
 
 
 CONFIG = load_config()
@@ -57,11 +58,11 @@ class TemperatureUnitBase(ABC):
 
     @property
     @abstractmethod
-    def data(self):
+    def data(self) -> pd.DataFrame:
         """Abstract property that subclasses must implement."""
         pass
 
     @abstractmethod
-    def load(self):
+    def load(self) -> pd.DataFrame:
         """Abstract method that subclasses must implement."""
         pass
