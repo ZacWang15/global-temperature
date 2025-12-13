@@ -117,11 +117,11 @@ class TemperatureMonthly(TemperatureBase):
             temperature = np.float32("-inf")
 
         return {
-            "temperature": temperature,
-            "geohash": geohash,
-            "distance": distance,
-            "snapped_latitude": snapped_latitude,
-            "snapped_longitude": snapped_longitude,
+            "temperature": np.float32(temperature),
+            "geohash": str(geohash),
+            "distance": np.float32(distance),
+            "snapped_latitude": np.float32(snapped_latitude),
+            "snapped_longitude": np.float32(snapped_longitude),
         }
 
     def add_unit(
