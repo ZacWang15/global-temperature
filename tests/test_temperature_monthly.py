@@ -95,18 +95,18 @@ def test_query_return_type(monthly_instance):
 
     # Check types of each field
     assert isinstance(
-        result["temperature"], (np.floating, float)
-    ), "temperature should be np.float32"
+        result["temperature"], float
+    ), "temperature should be float"
     assert isinstance(result["geohash"], str), "geohash should be a string"
     assert isinstance(
-        result["distance"], (np.floating, float)
-    ), "distance should be np.float32"
+        result["distance"], float
+    ), "distance should be float"
     assert isinstance(
-        result["snapped_latitude"], (np.floating, float)
-    ), "snapped_latitude should be np.float32"
+        result["snapped_latitude"], float
+    ), "snapped_latitude should be float"
     assert isinstance(
-        result["snapped_longitude"], (np.floating, float)
-    ), "snapped_longitude should be np.float32"
+        result["snapped_longitude"], float
+    ), "snapped_longitude should be float"
 
     # Check value constraints
     assert -90 <= result["snapped_latitude"] <= 90, "Latitude should be in valid range"

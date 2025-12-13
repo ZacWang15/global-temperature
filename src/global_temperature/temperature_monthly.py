@@ -73,11 +73,11 @@ class TemperatureMonthly(TemperatureBase):
 
         Returns:
             TemperatureQueryResult: A dictionary containing the following keys:
-                - temperature (np.float32): The queried temperature value in Celsius.
+                - temperature (float): The queried temperature value in Celsius.
                 - geohash (str): The geohash of the snapped coordinates.
-                - distance (np.float32): The distance between the input and snapped coordinates.
-                - snapped_latitude (np.float32): The snapped latitude on the grid.
-                - snapped_longitude (np.float32): The snapped longitude on the grid.
+                - distance (float): The distance between the input and snapped coordinates.
+                - snapped_latitude (float): The snapped latitude on the grid.
+                - snapped_longitude (float): The snapped longitude on the grid.
         """
         # validate the input parameters such year, month, latitude and longitude
         vd.check_coordinates(latitude, longitude)
@@ -114,14 +114,14 @@ class TemperatureMonthly(TemperatureBase):
 
         if temperature is None:
             logger.info(f"Temperature data not found for {latitude}, {longitude}")
-            temperature = np.float32("-inf")
+            temperature = float("-inf")
 
         return {
-            "temperature": np.float32(temperature),
+            "temperature": float(temperature),
             "geohash": str(geohash),
-            "distance": np.float32(distance),
-            "snapped_latitude": np.float32(snapped_latitude),
-            "snapped_longitude": np.float32(snapped_longitude),
+            "distance": float(distance),
+            "snapped_latitude": float(snapped_latitude),
+            "snapped_longitude": float(snapped_longitude),
         }
 
     def add_unit(

@@ -14,11 +14,11 @@ logger = logging.getLogger(__name__)
 
 class TemperatureQueryResult(TypedDict):
     """Result structure for temperature queries."""
-    temperature: np.float32
+    temperature: float
     geohash: str
-    distance: np.float32
-    snapped_latitude: np.float32
-    snapped_longitude: np.float32
+    distance: float
+    snapped_latitude: float
+    snapped_longitude: float
 
 
 class TemperatureBase(ABC):
