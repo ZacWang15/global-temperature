@@ -1,4 +1,8 @@
-from .temperature_base import TemperatureBase, TemperatureUnitBase, TemperatureQueryResult
+from .temperature_base import (
+    TemperatureBase,
+    TemperatureUnitBase,
+    TemperatureQueryResult,
+)
 from pathlib import Path
 import pandas as pd
 import logging
@@ -73,11 +77,11 @@ class TemperatureMonthly(TemperatureBase):
             month (int): The month for which the temperature data is queried.
             latitude (float): The latitude of the location.
             longitude (float): The longitude of the location.
-            snapped_latitude (float | None, optional): Pre-computed snapped latitude on the grid. 
+            snapped_latitude (float | None, optional): Pre-computed snapped latitude on the grid.
                 If provided (along with snapped_longitude and geohash), skips snapping computation. Defaults to None.
-            snapped_longitude (float | None, optional): Pre-computed snapped longitude on the grid. 
+            snapped_longitude (float | None, optional): Pre-computed snapped longitude on the grid.
                 If provided (along with snapped_latitude and geohash), skips snapping computation. Defaults to None.
-            geohash (str | None, optional): Pre-computed geohash of the snapped coordinates. 
+            geohash (str | None, optional): Pre-computed geohash of the snapped coordinates.
                 If provided (along with snapped_latitude and snapped_longitude), skips geohash computation. Defaults to None.
 
         Returns:
@@ -98,8 +102,12 @@ class TemperatureMonthly(TemperatureBase):
         )
 
         # Check if snapped coordinates and geohash are provided
-        has_snapped_coords = snapped_latitude is not None and snapped_longitude is not None and geohash is not None
-        
+        has_snapped_coords = (
+            snapped_latitude is not None
+            and snapped_longitude is not None
+            and geohash is not None
+        )
+
         if has_snapped_coords:
             # Use provided values, skip expensive snapping and geohash computation
             distance = 0.0  # Distance is 0 when using pre-snapped coordinates
@@ -109,6 +117,9 @@ class TemperatureMonthly(TemperatureBase):
             (snapped_latitude, snapped_longitude), distance = self.snap(
                 latitude, longitude, self.grid_name
             )
+
+            if snapped_latitude is None or snapped_longitude is None:
+                raise ValueError("Snapped coordinates cannot be None.")
 
             # Check if the distance is within the search radius
             vd.check_within_radius(self.search_radius, distance)
@@ -127,6 +138,8 @@ class TemperatureMonthly(TemperatureBase):
             unit = self.units[(year, month, geohash)]
 
         # query the temperature data from unit
+        if snapped_latitude is None or snapped_longitude is None:
+            raise ValueError("Snapped coordinates cannot be None.")
         temperature = unit.query(snapped_latitude, snapped_longitude)
 
         if temperature is None:
@@ -160,7 +173,9 @@ class TemperatureMonthlyUnit(TemperatureUnitBase):
     read a single monthly temperature data file
     """
 
-    def __init__(self, source_folder: str | Path, year: int, month: int, geohash: str) -> None:
+    def __init__(
+        self, source_folder: str | Path, year: int, month: int, geohash: str
+    ) -> None:
         super().__init__()
         self.source_folder = source_folder
         self.year = year
@@ -222,7 +237,7 @@ class TemperatureMonthlyUnit(TemperatureUnitBase):
         self.validate_dataframe(self.df)
         return self.df
 
-    def validate_dataframe(self, df: pd.DataFrame) -> pd.DataFrame:
+    def validate_dataframe(self, df: pd.DataFrame):
         """Validate the DataFrame using pandera."""
 
         # Define the schema
