@@ -61,6 +61,9 @@ class TemperatureMonthly(TemperatureBase):
         month: int,
         latitude: float,
         longitude: float,
+        snapped_latitude: float | None = None,
+        snapped_longitude: float | None = None,
+        geohash: str | None = None,
     ) -> TemperatureQueryResult:
         """
         Query the monthly temperature data based on latitude, longitude and year, month
@@ -70,6 +73,12 @@ class TemperatureMonthly(TemperatureBase):
             month (int): The month for which the temperature data is queried.
             latitude (float): The latitude of the location.
             longitude (float): The longitude of the location.
+            snapped_latitude (float | None, optional): Pre-computed snapped latitude on the grid. 
+                If provided (along with snapped_longitude and geohash), skips snapping computation. Defaults to None.
+            snapped_longitude (float | None, optional): Pre-computed snapped longitude on the grid. 
+                If provided (along with snapped_latitude and geohash), skips snapping computation. Defaults to None.
+            geohash (str | None, optional): Pre-computed geohash of the snapped coordinates. 
+                If provided (along with snapped_latitude and snapped_longitude), skips geohash computation. Defaults to None.
 
         Returns:
             TemperatureQueryResult: A dictionary containing the following keys:
@@ -88,18 +97,26 @@ class TemperatureMonthly(TemperatureBase):
             f"Querying temperature data for {year}-{month} at {latitude}, {longitude}"
         )
 
-        # snap latitude and longitude to the nearest point on the grid, todo
-        (snapped_latitude, snapped_longitude), distance = self.snap(
-            latitude, longitude, self.grid_name
-        )
+        # Check if snapped coordinates and geohash are provided
+        has_snapped_coords = snapped_latitude is not None and snapped_longitude is not None and geohash is not None
+        
+        if has_snapped_coords:
+            # Use provided values, skip expensive snapping and geohash computation
+            distance = 0.0  # Distance is 0 when using pre-snapped coordinates
+            logger.debug(f"Using pre-computed snapped coordinates and geohash")
+        else:
+            # snap latitude and longitude to the nearest point on the grid
+            (snapped_latitude, snapped_longitude), distance = self.snap(
+                latitude, longitude, self.grid_name
+            )
 
-        # Check if the distance is within the search radius
-        vd.check_within_radius(self.search_radius, distance)
+            # Check if the distance is within the search radius
+            vd.check_within_radius(self.search_radius, distance)
 
-        # Convert the latitude and longitude to geohash, todo
-        geohash = pgh.encode(
-            snapped_latitude, snapped_longitude, self.geohash_precision
-        )
+            # Convert the latitude and longitude to geohash
+            geohash = pgh.encode(
+                snapped_latitude, snapped_longitude, self.geohash_precision
+            )
 
         # Check if monthly data already loaded before
         if (year, month, geohash) not in self.units:

@@ -277,3 +277,202 @@ class TestBenchmarkComparison:
         print(f"  Speedup: {speedup:.2f}x")
         
         assert warm_ms < cold_ms, "Warm cache should be faster than cold cache"
+
+
+class TestPreComputedParametersPerformance:
+    """Test performance improvement when using pre-computed snapped coordinates and geohash."""
+
+    def test_with_vs_without_precomputed_params_single_query(self):
+        """Compare performance of single query with and without pre-computed parameters."""
+        temp_monthly = TemperatureMonthly(
+            search_radius=0.1,
+            geohash_precision=1,
+            max_cache_size=100,
+            grid_name="01x01",
+        )
+        
+        # Test data (Melbourne area)
+        year = 2024
+        month = 1
+        latitude = -37.89994
+        longitude = 145.06802
+        snapped_latitude = -37.900001525878906
+        snapped_longitude = 145.10000610351562
+        geohash = "r"
+        
+        # Test WITHOUT pre-computed parameters (standard query)
+        start_without = time.perf_counter()
+        result_without = temp_monthly.query(
+            year=year,
+            month=month,
+            latitude=latitude,
+            longitude=longitude,
+        )
+        end_without = time.perf_counter()
+        without_ms = (end_without - start_without) * 1000
+        
+        # Test WITH pre-computed parameters (optimized query)
+        start_with = time.perf_counter()
+        result_with = temp_monthly.query(
+            year=year,
+            month=month,
+            latitude=latitude,
+            longitude=longitude,
+            snapped_latitude=snapped_latitude,
+            snapped_longitude=snapped_longitude,
+            geohash=geohash,
+        )
+        end_with = time.perf_counter()
+        with_ms = (end_with - start_with) * 1000
+        
+        speedup = without_ms / with_ms if with_ms > 0 else float('inf')
+        time_saved = without_ms - with_ms
+        percent_improvement = (time_saved / without_ms * 100) if without_ms > 0 else 0
+        
+        print(f"\n[PERFORMANCE] Pre-computed parameters comparison (single query):")
+        print(f"  Without pre-computed params: {without_ms:.2f}ms")
+        print(f"  With pre-computed params: {with_ms:.2f}ms")
+        print(f"  Time saved: {time_saved:.2f}ms ({percent_improvement:.1f}% improvement)")
+        print(f"  Speedup: {speedup:.2f}x")
+        
+        # Both should return the same temperature
+        assert result_without["temperature"] == result_with["temperature"]
+        # Pre-computed version should be faster
+        assert with_ms < without_ms, "Query with pre-computed params should be faster"
+
+    def test_with_vs_without_precomputed_params_bulk_queries(self):
+        """Compare performance of bulk queries with and without pre-computed parameters."""
+        temp_monthly = TemperatureMonthly(
+            search_radius=0.1,
+            geohash_precision=1,
+            max_cache_size=100,
+            grid_name="01x01",
+        )
+        
+        # Test data (Melbourne area)
+        year = 2024
+        month = 1
+        latitude = -37.89994
+        longitude = 145.06802
+        snapped_latitude = -37.900001525878906
+        snapped_longitude = 145.10000610351562
+        geohash = "r"
+        
+        num_iterations = 100
+        
+        # Test WITHOUT pre-computed parameters
+        start_without = time.perf_counter()
+        for _ in range(num_iterations):
+            temp_monthly.query(
+                year=year,
+                month=month,
+                latitude=latitude,
+                longitude=longitude,
+            )
+        end_without = time.perf_counter()
+        without_total_ms = (end_without - start_without) * 1000
+        without_avg_ms = without_total_ms / num_iterations
+        
+        # Test WITH pre-computed parameters
+        start_with = time.perf_counter()
+        for _ in range(num_iterations):
+            temp_monthly.query(
+                year=year,
+                month=month,
+                latitude=latitude,
+                longitude=longitude,
+                snapped_latitude=snapped_latitude,
+                snapped_longitude=snapped_longitude,
+                geohash=geohash,
+            )
+        end_with = time.perf_counter()
+        with_total_ms = (end_with - start_with) * 1000
+        with_avg_ms = with_total_ms / num_iterations
+        
+        speedup = without_avg_ms / with_avg_ms if with_avg_ms > 0 else float('inf')
+        time_saved_total = without_total_ms - with_total_ms
+        time_saved_avg = without_avg_ms - with_avg_ms
+        percent_improvement = (time_saved_total / without_total_ms * 100) if without_total_ms > 0 else 0
+        
+        print(f"\n[PERFORMANCE] Pre-computed parameters comparison ({num_iterations} iterations):")
+        print(f"  Without pre-computed params:")
+        print(f"    Total: {without_total_ms:.2f}ms")
+        print(f"    Average: {without_avg_ms:.4f}ms")
+        print(f"  With pre-computed params:")
+        print(f"    Total: {with_total_ms:.2f}ms")
+        print(f"    Average: {with_avg_ms:.4f}ms")
+        print(f"  Time saved:")
+        print(f"    Total: {time_saved_total:.2f}ms ({percent_improvement:.1f}% improvement)")
+        print(f"    Per query: {time_saved_avg:.4f}ms")
+        print(f"  Speedup: {speedup:.2f}x")
+        
+        # Pre-computed version should be faster
+        assert with_avg_ms < without_avg_ms, "Query with pre-computed params should be faster"
+
+    def test_precomputed_params_overhead_breakdown(self):
+        """Measure the overhead breakdown of snapping and geohash computation."""
+        temp_monthly = TemperatureMonthly(
+            search_radius=0.1,
+            geohash_precision=1,
+            max_cache_size=100,
+            grid_name="01x01",
+        )
+        
+        # Test data
+        year = 2024
+        month = 1
+        latitude = -37.89994
+        longitude = 145.06802
+        snapped_latitude = -38.29999923706055
+        snapped_longitude = 145.1999969482422
+        geohash = "r"
+        
+        # Run the query once to ensure data is loaded
+        temp_monthly.query(
+            year=year,
+            month=month,
+            latitude=latitude,
+            longitude=longitude,
+        )
+        
+        # Now measure with warm cache
+        num_iterations = 50
+        
+        # Measure WITHOUT pre-computed (includes snapping + geohash + data lookup)
+        start_full = time.perf_counter()
+        for _ in range(num_iterations):
+            temp_monthly.query(
+                year=year,
+                month=month,
+                latitude=latitude,
+                longitude=longitude,
+            )
+        end_full = time.perf_counter()
+        full_avg_ms = ((end_full - start_full) / num_iterations) * 1000
+        
+        # Measure WITH pre-computed (only data lookup)
+        start_optimized = time.perf_counter()
+        for _ in range(num_iterations):
+            temp_monthly.query(
+                year=year,
+                month=month,
+                latitude=latitude,
+                longitude=longitude,
+                snapped_latitude=snapped_latitude,
+                snapped_longitude=snapped_longitude,
+                geohash=geohash,
+            )
+        end_optimized = time.perf_counter()
+        optimized_avg_ms = ((end_optimized - start_optimized) / num_iterations) * 1000
+        
+        # Calculate overhead
+        overhead_ms = full_avg_ms - optimized_avg_ms
+        overhead_percent = (overhead_ms / full_avg_ms * 100) if full_avg_ms > 0 else 0
+        
+        print(f"\n[PERFORMANCE] Overhead breakdown (warm cache, {num_iterations} iterations):")
+        print(f"  Total query time (with snapping): {full_avg_ms:.4f}ms")
+        print(f"  Pure data lookup time: {optimized_avg_ms:.4f}ms")
+        print(f"  Snapping + geohash overhead: {overhead_ms:.4f}ms ({overhead_percent:.1f}%)")
+        print(f"  Speedup potential: {full_avg_ms / optimized_avg_ms:.2f}x")
+        
+        assert overhead_ms > 0, "Snapping should add measurable overhead"
