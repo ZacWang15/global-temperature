@@ -1,6 +1,6 @@
 [project]
 name = "global-temperature"
-version = "0.1.4"
+version = "0.1.5"
 description = "provide global monthly temperature data from 1970 to present"
 authors = [
     {name = "zacwang",email = "zacwang15@gmail.com"}
