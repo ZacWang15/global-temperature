@@ -15,7 +15,6 @@ class TemperatureFactory:
     Factory class to create Temperature objects.
     """
 
-    @overload
     @staticmethod
     def create_temperature_object(
         data_type: str,
@@ -24,12 +23,7 @@ class TemperatureFactory:
         geohash_precision: int = 1,
         max_cache_size: int = 200,
         grid_name: str = "01x01",
-    ) -> TemperatureMonthly: ...
-
-    @staticmethod
-    def create_temperature_object(
-        data_type: str, **kwargs
-    ) -> Union[TemperatureMonthly]:
+    ) -> TemperatureMonthly:
         """
         Creates a Temperature object based on the data type.
 
@@ -44,6 +38,12 @@ class TemperatureFactory:
             ValueError: If the data type is not supported.
         """
         if data_type == "monthly":
-            return TemperatureMonthly(**kwargs)
+            return TemperatureMonthly(
+                search_radius=search_radius,
+                source_folder=source_folder,
+                geohash_precision=geohash_precision,
+                max_cache_size=max_cache_size,
+                grid_name=grid_name,
+            )
         else:
             raise ValueError(f"Unsupported data type: {data_type}")
