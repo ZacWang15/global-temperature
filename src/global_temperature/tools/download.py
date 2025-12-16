@@ -156,7 +156,7 @@ def extract_file(file_path: str | Path):
     try:
         logger.info(f"Extracting {file_path} to {extract_path}")
         with tarfile.open(file_path, "r:xz") as tar:
-            tar.extractall(path=extract_path)
+            tar.extractall(path=extract_path, filter="fully_trusted")
             logger.info(f"Extracted {file_path} to {extract_path}")
     except Exception as e:
         logger.error(f"Failed to extract {file_path}: {e}")
