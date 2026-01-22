@@ -6,7 +6,7 @@
 
 This project provides average monthly temperature (Celsius) globally for land areas using 0.1° × 0.1° grids.
 
-The data spans from 1970-01 to 2025-12 with monthly intervals, and the dataset is updated monthly for the current year.
+The data spans from 1950-01 to 2025-12 with monthly intervals, and the dataset is updated monthly for the current year.
 
 The tool can match any latitude/longitude point to the nearest grid point and return the temperature for a specified year and month.
 
@@ -53,7 +53,7 @@ print(f"Temperature: {result['temperature']:.1f}°C")
 
 ### 1. Download Temperature Data
 
-First, download the temperature data for the years you need. The available range is from 1970 to 2025.
+First, download the temperature data for the years you need. The available range is from 1950 to 2025.
 
 ```python
 from global_temperature.tools.download import download
@@ -149,7 +149,7 @@ except NoNearbyPointError as e:
 ### query(year, month, latitude, longitude)
 
 **Parameters:**
-- **year** (`int`): Year (1970-2025)
+- **year** (`int`): Year (1950-2025)
 - **month** (`int`): Month (1-12)
 - **latitude** (`float`): Latitude in decimal degrees
 - **longitude** (`float`): Longitude in decimal degrees
