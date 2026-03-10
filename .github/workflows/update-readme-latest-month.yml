@@ -2,7 +2,7 @@ name: Update README latest month
 
 on:
   schedule:
-    - cron: '0 4 5-7 * *'
+    - cron: "0 4 5-7 * *"
   workflow_dispatch:
 
 permissions:
